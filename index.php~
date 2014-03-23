@@ -1,0 +1,7 @@
+<?php
+$var=2;
+echo "!!hello world!!";
+if(ai==1) {
+	print "hello";
+}
+?>
