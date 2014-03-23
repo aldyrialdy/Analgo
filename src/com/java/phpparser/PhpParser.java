@@ -242,7 +242,8 @@ public class PhpParser {
 
 		}
 	}
-
+	
+	//tambahan property
 	public void property() {
 		if (this.token.equalsIgnoreCase("public")
 				|| this.token.equalsIgnoreCase("private")
