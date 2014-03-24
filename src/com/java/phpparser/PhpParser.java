@@ -300,8 +300,156 @@ public class PhpParser {
 		}
 	}
 
+	//memberClassCalling
+	public void memberClassCall(){
+		if(this.token.equals("$this")){
+			this.token=this.nextToken();
+			if(this.token.equals("->")){
+				this.token=this.nextToken();
+				if(this.isIdentifier()){
+					this.token = this.nextToken();
+					this.functionArgExpression();
+					return;
+				}
+			}
+		}
+		System.out.println("Syntax error!!");
+		System.exit(1);
+	}
+	
+	//basicExpression
+	public void basicExpression(){
+		//cek nilai first dari basicExpression
+		
+		if(this.token.charAt(0)=='$'){ //cek variabel
+			if(this.token.equals("$this")){ //cek member class
+				this.memberClassCall();
+			}
+			//masuk fungsi variableName()
+		}
+		else if(this.isNumber()){ //cek token adalah angka
+			this.number();
+		}
+		else if(this.isString()) { //cek token adalah string
+			this.string();
+		}
+		else if(this.isIdentifier()){
+			//if(){
+				
+			//}
+		}
+			
+	}
+	
+	//functionArgExpression
+	public void functionArgExpression(){
+		if(this.token.equals("(")){
+			this.token = this.nextToken();
+			//parameterList()
+			this.parameterList();
+			if(this.token.equals(")")) {
+				this.token = this.nextToken();
+				return;
+			}
+			else{
+				System.out.println("Syntax error!!");
+				System.exit(1);
+			}
+		}
+		return;
+	}
+	
+	public void parameterList(){
+		
+		return;
+	}
+	
+	//function functionCallStatement
+	public void functionCallStatement(){
+		this.functionCallExpression();
+		if(this.token.equals(";")){
+			this.token = this.nextToken();
+			return;
+		}
+		System.out.println("Syntax error!!");
+		System.exit(1);
+	}
+	
+	//function call expression	
+	public void functionCallExpression(){
+		//check the current token is identifier (function name) or not
+		this.functionName();
+		if(this.token.equals("(")){
+			this.token = this.nextToken();
+			//call function parameterlist()
+			this.parameterList();
+			if(this.token.equals(")")) {
+				return;
+			}
+		}
+		
+		System.out.println("Syntax error!!");
+		System.exit(1);
+	}
+	//function functionName()
+	public void functionName(){
+		if(this.isIdentifier()) {
+			this.token = this.nextToken();
+			return;
+		}
+		System.out.println("Syntax error!!");
+		System.exit(1);
+	}
+	
+	//directives
+	public void directives(){
+		if(this.token.equals("ticks")){
+			this.token = this.nextToken();
+			if(this.token.equals("=")){
+				if(isDigit()) {
+					this.token= this.nextToken();
+					return;
+				}
+			}
+		}
+		System.out.println("Syntax error!!");
+		System.exit(1);
+	}
+	//simpleVarName
+	public void simpleVarName(){
+		//this.token="$var";
+		if(this.token.charAt(0)=='$'){
+			//get the identifier name after '$' character
+			this.token = this.token.substring(1);
+			//check if it is identifier or not
+			if(this.isIdentifier()) {
+				this.token=this.nextToken();
+				return;
+			}
+			System.out.println("Syntax error!!");
+			System.exit(1);
+		}
+	}
+	public void string(){
+		if(this.isString()){
+			this.token=this.nextToken();
+			return;
+		}
+		System.out.println("Syntax error!!");
+		System.exit(1);
+	}
+	
+	public void number(){
+		if(this.isNumber()){
+			this.token=this.nextToken();
+			return;
+		}
+		System.out.println("Syntax error!!");
+		System.exit(1);
+	}
+	
 	// check is identifier
-	public boolean isIdentifier(String token) {
+	public boolean isIdentifier() {
 		if ((int) token.charAt(0) != 95
 				&& !((int) token.charAt(0) >= 65 && (int) token.charAt(0) <= 90)
 				&& !((int) token.charAt(0) >= 97 && (int) token.charAt(0) <= 122)) {
@@ -322,41 +470,33 @@ public class PhpParser {
 	public boolean isString() {
 		if ((int) this.token.charAt(0) == 34
 				&& (int) this.token.charAt(this.token.length() - 1) == 34) {
-			this.token = this.nextToken();
 			return true;
 		} else if ((int) this.token.charAt(0) == 39
 				&& (int) this.token.charAt(this.token.length() - 1) == 39) {
-			this.token = this.nextToken();
 			return true;
 		}
 		return false;
 	}
 
 	// check is number
-	public boolean isNumber(String token) {
+	public boolean isNumber() {
 		if (isDigit()) {
 			this.token = this.nextToken();
-			System.out.println("token:" + this.token);
 			if (this.token.equals(".")) {
 				this.token = this.nextToken();
-				System.out.println("token:" + this.token);
 				if (isDigit()) {
-					this.token = this.nextToken();
-					System.out.println("token:" + this.token);
-					// return true;
+					return true;
 				} else {
 					System.out.println("syntax error!!");
 					return false;
 				}
 			} else {
-				this.token = this.nextToken();
-				System.out.println("token:" + this.token);
 				return true;
 			}
 		}
 		return false;
 	}
-
+	
 	// check is String
 	public boolean isDigit() {
 		if ((int) this.token.charAt(0) >= 48
@@ -366,7 +506,7 @@ public class PhpParser {
 		}
 		return false;
 	}
-
+	/* method dibawah ini digunakan untuk melakukan pengecekan pada operator*/
 	// is prefix operator
 	public boolean isPrefixOp(String op) {
 		if (isCastingOp(op) || isSuffixOp(op) || isOtherOp(op)) {
@@ -519,7 +659,6 @@ public class PhpParser {
 		}
 		return false;
 	}
-
 	/*
 	 * public String firstCharacter(){ String firstStr=null;
 	 * 
