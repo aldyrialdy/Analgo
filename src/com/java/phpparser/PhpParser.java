@@ -299,7 +299,75 @@ public class PhpParser {
 			return;
 		}
 	}
-
+	
+	//variableDeclaration
+	public void variableDeclaration(){
+		simpleVarName();
+		simpleVariableNameCont();
+	}
+	
+	//SimpleVariableNameCont
+	public void simpleVariableNameCont() {
+		// TODO Auto-generated method stub
+		if(this.token.equalsIgnoreCase("=")){
+			this.token = this.nextToken();
+			this.variableValue();
+			if(this.token.equalsIgnoreCase(";")){
+				this.nextToken();
+			}
+			else{
+				System.out.println("syntax error!!");
+				System.exit(1);
+			}
+		}
+		else if(this.token.equalsIgnoreCase(";")){
+			this.token = this.nextToken();
+		}
+		else if(this.token.equalsIgnoreCase("[")){
+//			this.dimension();
+		}
+		else{
+			System.out.println("syntax error!!");
+			System.exit(1);
+		}
+	}
+	
+	//variableValue
+	public void variableValue() {
+		// TODO Auto-generated method stub
+		if(this.token.equalsIgnoreCase("array")){
+			this.token = this.nextToken();
+			if (this.token.equalsIgnoreCase("(")) {
+				this.token = this.nextToken();
+//				this.arrayValue();
+				if (this.token.equalsIgnoreCase("(")) {
+					this.token = this.nextToken();
+				}
+				else{
+					System.out.println("syntax error!!");
+					System.exit(1);
+				}
+			}
+			else{
+				System.out.println("syntax error!!");
+				System.exit(1);
+			}
+		}
+		else if(this.token.contains("\"") || this.token.contains("\'") || isNumber()){
+			Values();
+		}
+		else{
+			System.out.println("syntax error!!");
+			System.exit(1);
+		}
+	}
+	
+	//Values
+	private void Values() {
+		// TODO Auto-generated method stub
+		//belum
+	}
+	
 	//memberClassCalling
 	public void memberClassCall(){
 		if(this.token.equals("$this")){
