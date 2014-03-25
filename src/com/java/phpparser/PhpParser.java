@@ -12,10 +12,6 @@ import java.io.Reader;
 import java.io.FileInputStream;
 import java.nio.charset.Charset;
 
-import javax.management.ObjectName;
-
-import sun.org.mozilla.javascript.ast.Jump;
-
 public class PhpParser {
 	private String token = null;
 	private ArrayList scriptTokens = null;
@@ -288,7 +284,7 @@ public class PhpParser {
 //		}
 	}
 
-	// tambahan property
+	//property - aldy
 	public void property() {
 		if (this.token.equalsIgnoreCase("public")
 				|| this.token.equalsIgnoreCase("private")
@@ -306,6 +302,7 @@ public class PhpParser {
 		// System.exit(1);
 	}
 
+	//finalProperty - aldy
 	public void finalProperty() {
 		// TODO Auto-generated method stub
 		if (this.token.equalsIgnoreCase("final")) {
@@ -315,6 +312,7 @@ public class PhpParser {
 		}
 	}
 
+	//visibilityProperty - aldy
 	public void visibilityProperty() {
 		// TODO Auto-generated method stub
 		if (this.token.equalsIgnoreCase("public")
@@ -326,6 +324,7 @@ public class PhpParser {
 		}
 	}
 
+	//staticProperty - aldy
 	public void staticProperty() {
 		// TODO Auto-generated method stub
 		if (this.token.equalsIgnoreCase("static")) {
@@ -335,6 +334,7 @@ public class PhpParser {
 		}
 	}
 
+	//abstractProperty - aldy
 	public void abstractProperty() {
 		// TODO Auto-generated method stub
 		if (this.token.equalsIgnoreCase("abstract")) {
@@ -344,13 +344,13 @@ public class PhpParser {
 		}
 	}
 
-	// variableDeclaration
+	// variableDeclaration - aldy
 	public void variableDeclaration() {
 		simpleVarName();
 		simpleVariableNameCont();
 	}
 
-	// SimpleVariableNameCont
+	// SimpleVariableNameCont - aldy
 	public void simpleVariableNameCont() {
 		// TODO Auto-generated method stub
 		if (this.token.equalsIgnoreCase("=")) {
@@ -372,7 +372,7 @@ public class PhpParser {
 		}
 	}
 
-	// variableValue
+	// variableValue - aldy
 	public void variableValue() {
 		// TODO Auto-generated method stub
 		if (this.token.equalsIgnoreCase("array")) {
@@ -399,7 +399,7 @@ public class PhpParser {
 		}
 	}
 
-	// Values
+	// Values - aldy
 	public void Values() {
 		// TODO Auto-generated method stub
 		if (this.isString()) {
@@ -412,13 +412,13 @@ public class PhpParser {
 		}
 	}
 
-	// compoundStatement
+	// compoundStatement - aldy
 	public void compoundStatement() {
 		this.Statement();
 		this.compoundStatementNext();
 	}
 
-	// compoundStatementNext
+	// compoundStatementNext - aldy
 	public void compoundStatementNext() {
 		// TODO Auto-generated method stub
 		if (this.token.contains("$")
@@ -430,7 +430,7 @@ public class PhpParser {
 		}
 	}
 	
-	//Statement
+	//Statement - aldy
 	public void Statement() {
 		// TODO Auto-generated method stub
 		if (this.token.charAt(0) == '$' || this.isNumber() || this.isString() || this.isIdentifier()) { // cek variabel
@@ -460,7 +460,7 @@ public class PhpParser {
 		}
 	}
 
-	//objectInstantiationStatement
+	//objectInstantiationStatement - aldy
 	public void objectInstantiationStatement() {
 		// TODO Auto-generated method stub
 //		this.objectName();
@@ -503,7 +503,7 @@ public class PhpParser {
 		}
 	}
 	
-	//classMemberCallingStatement
+	//classMemberCallingStatement - aldy
 	public void classMemberCallingStatement() {
 		// TODO Auto-generated method stub
 //		this.classMemberCallingExpression();
@@ -516,7 +516,7 @@ public class PhpParser {
 		}
 	}
 	
-	//expressionStatement
+	//expressionStatement - aldy
 	public void expressionStatement() {
 		// TODO Auto-generated method stub
 		this.expression();
@@ -529,7 +529,7 @@ public class PhpParser {
 		}
 	}
 	
-	//jumpStatement
+	//jumpStatement - aldy
 	public void jumpStatement() {
 		// TODO Auto-generated method stub
 		if(this.token.equalsIgnoreCase("continue")){
@@ -547,7 +547,7 @@ public class PhpParser {
 		}
 	}
 
-	//declareStatement
+	//declareStatement - aldy
 	public void declareStatement() {
 		// TODO Auto-generated method stub
 		if(this.token.equalsIgnoreCase("declare")){
@@ -575,7 +575,7 @@ public class PhpParser {
 		}
 	}
 	
-	//declareStatementNext
+	//declareStatementNext - aldy
 	public void declareStatementNext() {
 		// TODO Auto-generated method stub
 		if(this.token.equalsIgnoreCase(";")){
@@ -605,7 +605,7 @@ public class PhpParser {
 		//belum	
 	}
 	
-	//nullStatement
+	//nullStatement - aldy
 	public void nullStatement() {
 		// TODO Auto-generated method stub
 		if(this.token.equalsIgnoreCase(";")){
@@ -617,7 +617,7 @@ public class PhpParser {
 		}
 	}
 	
-	//continueStatement
+	//continueStatement - aldy
 	public void continueStatement() {
 		// TODO Auto-generated method stub
 		if(this.token.equalsIgnoreCase("continue")){
@@ -637,7 +637,7 @@ public class PhpParser {
 		}
 	}
 
-	//returnStatement
+	//returnStatement - aldy
 	public void returnStatement() {
 		// TODO Auto-generated method stub
 		if(this.token.equalsIgnoreCase("return")){
@@ -657,7 +657,7 @@ public class PhpParser {
 		}
 	}
 
-	//returnStatementNext
+	//returnStatementNext - aldy
 	public void returnStatementNext() {
 		// TODO Auto-generated method stub
 		if(this.token.charAt(0) == '$' || this.isNumber() || this.isString() || this.isIdentifier()){
@@ -665,7 +665,7 @@ public class PhpParser {
 		}
 	}
 
-	//breakStatement
+	//breakStatement - aldy
 	public void breakStatement() {
 		// TODO Auto-generated method stub
 		if(this.token.equalsIgnoreCase("break")){
@@ -685,7 +685,7 @@ public class PhpParser {
 		}
 	}
 
-	//digitConstantaNext
+	//digitConstantaNext - aldy
 	public void digitConstantaNext() {
 		// TODO Auto-generated method stub
 		if(this.isDigit()){
