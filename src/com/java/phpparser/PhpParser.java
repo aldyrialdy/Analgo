@@ -46,16 +46,17 @@ public class PhpParser {
 		for (int i = 0; i < tokenSize; i++) {
 			System.out.println(scriptTokens.get(i).toString());
 		}
-		// System.out.println("-----------------------------------\n");
+		 System.out.println("-----------------------------------\n");
 		// move nextToken pointer to the first word of array of words
-		// System.out.println(index+": "+this.token);
-		// this.token=this.nextToken();
-		// System.out.println(index+": "+this.token);
-		// this.token=this.nextToken();
-		// System.out.println(index+": "+this.token);
-		// this.token=this.nextToken();
-		// System.out.println(index+": "+this.token);
-		// System.out.println("check number: "+this.isNumber("token"));
+		 System.out.println(index+": "+this.token);
+		 this.token=this.nextToken();
+		 System.out.println(index+": "+this.token);
+		 this.token=this.nextToken();
+		 System.out.println(index+": "+this.token);
+		 this.token=this.nextToken();
+		 System.out.println(index+": "+this.token);
+		 this.additiveExpress();
+		 //System.out.println("check number: "+this.isNumber());
 	}
 
 	public void readFile(String filename) {
@@ -223,13 +224,13 @@ public class PhpParser {
 					System.out.println("Syntax is correct!!");
 				}
 			} else {
-				System.out.println("syntax error!!");
+				System.out.println("syntax error!! program");
 				System.exit(1);
 			}
 		}
 
 		else {
-			System.out.println("syntax error!!");
+			System.out.println("syntax error!! program");
 			System.exit(1);
 		}
 	}
@@ -385,29 +386,7 @@ public class PhpParser {
 		System.exit(1);
 	}
 	
-	//basicExpression - mahar
-	public void basicExpression(){
-		//cek nilai first dari basicExpression
-		
-		if(this.token.charAt(0)=='$'){ //cek variabel
-			if(this.token.equals("$this")){ //cek member class
-				this.memberClassCall();
-			}
-			//masuk fungsi variableName()
-		}
-		else if(this.isNumber()){ //cek token adalah angka
-			this.number();
-		}
-		else if(this.isString()) { //cek token adalah string
-			this.string();
-		}
-		else if(this.isIdentifier()){
-			//if(){
-				
-			//}
-		}
-			
-	}
+	
 	
 	//functionArgExpression - mahar
 	public void functionArgExpression(){
@@ -442,7 +421,7 @@ public class PhpParser {
 			this.multiplicativeExpress();
 		}
 		else if(this.isEqualityOp(this.getTokenAt(this.getCurrentIndex()+1))){
-			this.EqualityExpress();
+			this.equalityExpress();
 		}
 		else if(this.isRelationalOp(this.getTokenAt(this.getCurrentIndex()+1))){
 			this.relationalExpress();
@@ -475,56 +454,170 @@ public class PhpParser {
 			this.booleanXorExpress();
 		}
 	}
-	
+	//additiveExpress - mahar
 	public void additiveExpress(){
 		this.multiplicativeExpress();
+		//this.token = this.nextToken();
 		this.additiveExpress2();
+		return;
 	}
-	
+	//additiveExpress2 - mahar
 	public void additiveExpress2(){
-		this.additiveExpress();
+		System.out.println("enter additiveExpress2: "+this.token);
 		if(this.isAddOp(this.token)){
-			
+			this.token = this.nextToken();
+			System.out.println("go to next token: "+this.token);
+			this.additiveExpress();
 		}
+		return;		
 	}
-	
+	//multiplicativeExpress - mahar
 	public void multiplicativeExpress(){
-		
+		this.prefixExpress();
+		this.multiplicativeExpress2();
+		return;
 	}
-
-	public void EqualityExpress(){
-		
+	//multiplicativeExpress2 - mahar
+	public void multiplicativeExpress2(){
+		System.out.println("enter multiplicativeExpress2: "+this.token);
+		if(this.isMultiOp(this.token)){
+			
+			this.token = this.nextToken();
+			System.out.println("go to next token: "+this.token);
+			this.multiplicativeExpress();
+		}
+		return;		
 	}
-
+	//EqualityExpress - mahar
+	public void equalityExpress(){
+		this.relationalExpress();
+		this.equalityExpress2();
+		return;
+	}
+	//EqualityExpress2 - mahar
+	public void equalityExpress2(){
+		System.out.println("enter EqualityExpress2: "+this.token);
+		if(this.isEqualityOp(this.token)){
+			
+			this.token = this.nextToken();
+			System.out.println("go to next token: "+this.token);
+			this.equalityExpress();
+		}
+		return;	
+	}
+	//relationalExpress - mahar
 	public void relationalExpress(){
+		this.shiftExpress();
+		this.relationalExpress2();
 		
 	}
-
+	//relationalExpress2 - mahar
+	public void relationalExpress2(){
+		System.out.println("enter relationalExpress2: "+this.token);
+		if(this.isRelationalOp(this.token)){
+			this.token = this.nextToken();
+			System.out.println("go to next token: "+this.token);
+			this.relationalExpress();
+		}
+		return;
+	}
+	//shiftExpress - mahar
 	public void shiftExpress(){
-		
+		this.additiveExpress();
+		this.shiftExpress2();
 	}
-	
+	//shiftExpress2 - mahar
+	public void shiftExpress2(){
+		System.out.println("enter shiftExpress2: "+this.token);
+		if(this.isShiftOp(this.token)){
+			this.token = this.nextToken();
+			System.out.println("go to next token: "+this.token);
+			this.shiftExpress();
+		}
+		return;
+	}
+	//bitwiseAndExpress - mahar
 	public void bitwiseAndExpress(){
-		
+		this.equalityExpress();
+		this.bitwiseAndExpress2();
 	}
-
+	//bitwiseAndExpress2 - mahar
+	public void bitwiseAndExpress2(){
+		System.out.println("enter bitwiseAndExpress2: "+this.token);
+		if(this.isBitwiseAnd(this.token)){
+			this.token = this.nextToken();
+			System.out.println("go to next token: "+this.token);
+			this.bitwiseAndExpress();
+		}
+		return;
+	}
+	//bitwiseOrExpress - mahar
 	public void bitwiseOrExpress(){
-		
+		this.bitwiseAndExpress();
+		this.bitwiseOrExpress2();
+	}
+	//bitwiseOrExpress2 - mahar
+	public void bitwiseOrExpress2(){
+		System.out.println("enter bitwiseOrExpress2: "+this.token);
+		if(this.isBitwiseOr(this.token)){
+			this.token = this.nextToken();
+			System.out.println("go to next token: "+this.token);
+			this.bitwiseOrExpress();
+		}
+		return;
 	}
 
+	//bitwiseXorExpress - mahar
 	public void bitwiseXorExpress(){
-		
+		this.bitwiseAndExpress();
+		this.bitwiseXorExpress2();
 	}
-
+	//bitwiseXorExpress2 - mahar
+	public void bitwiseXorExpress2(){
+		System.out.println("enter bitwiseXorExpress2: "+this.token);
+		if(this.isBitwiseXor(this.token)){
+			this.token = this.nextToken();
+			System.out.println("go to next token: "+this.token);
+			this.bitwiseXorExpress();
+		}
+		return;
+	}
+	//lowBooleanOrExpress - mahar
 	public void lowBooleanOrExpress(){
-		
+		this.booleanXorExpress();
+		this.lowBooleanOrExpress2();
 	}
-
+	//lowBooleanOrExpress2 - mahar
+	public void lowBooleanOrExpress2(){
+		System.out.println("enter lowBooleanOrExpress2: "+this.token);
+		if(this.isLowBooleanOr(this.token)){
+			this.token = this.nextToken();
+			System.out.println("go to next token: "+this.token);
+			this.lowBooleanOrExpress();
+		}
+		return;
+	}
+	//highBooleanOrExpress - mahar
 	public void highBooleanOrExpress(){
+		this.highBoolanAndExpress();
+		this.highBooleanOrExpress2();
+	}
+	//highBooleanOrExpress2 - mahar
+	public void highBooleanOrExpress2(){
+		System.out.println("enter highBooleanOrExpress2: "+this.token);
+		if(this.isHighBooleanOr(this.token)){
+			this.token = this.nextToken();
+			System.out.println("go to next token: "+this.token);
+			this.highBooleanOrExpress();
+		}
+		return;
+	}
+	//lowBoolanAndExpress - mahar
+	public void lowBoolanAndExpress(){
 		
 	}
-
-	public void lowBoolanAndExpress(){
+	//lowBoolanAndExpress2 - mahar
+	public void lowBoolanAndExpress2(){
 		
 	}
 
@@ -535,9 +628,63 @@ public class PhpParser {
 	public void booleanXorExpress(){
 		
 	}
+	//prefixExpress - mahar
+	public void prefixExpress(){
+		this.suffixExpress();
+		this.prefixExpress2();
+		return;
+	}
+	//prefixExpress2 - mahar
+	public void prefixExpress2(){
+		System.out.println("enter prefixExpress2: "+this.token);
+		if(this.isPrefixOp(this.token)){
+			this.token = this.nextToken();
+			System.out.println("go to next token: "+this.token);
+			this.prefixExpress();
+		}
+		return;		
+	}
 
-
-
+	//prefixExpress - mahar
+	public void suffixExpress(){
+		this.basicExpression();
+		this.suffixExpress2();
+		return;
+	}
+	//prefixExpress2 - mahar
+	public void suffixExpress2(){
+		System.out.println("enter suffixExpress2: "+this.token);
+		if(this.isSuffixOp(this.token)){
+			this.token = this.nextToken();
+			System.out.println("go to next token: "+this.token);
+			this.suffixExpress();
+		}
+		return;		
+	}
+	//basicExpression - mahar
+	public void basicExpression(){
+		//cek nilai first dari basicExpression
+		
+		if(this.token.charAt(0)=='$'){ //cek variabel
+			if(this.token.equals("$this")){ //cek member class
+				this.memberClassCall();
+				return;
+			}
+			//masuk fungsi variableName()
+			System.out.println("cek simpleVarName");
+			this.simpleVarName();
+		}
+		else if(this.isNumber()){ //cek token adalah angka
+			this.number();
+		}
+		else if(this.isString()) { //cek token adalah string
+			this.string();
+		}
+		else if(this.isIdentifier()){ //cek token adalah identifier
+			this.functionCallExpression();
+		}
+			
+	}
 
 	
 	//function functionCallStatement - mahar
@@ -547,7 +694,7 @@ public class PhpParser {
 			this.token = this.nextToken();
 			return;
 		}
-		System.out.println("Syntax error!!");
+		System.out.println("Syntax error!! functionCallStatement");
 		System.exit(1);
 	}
 	
@@ -564,7 +711,7 @@ public class PhpParser {
 			}
 		}
 		
-		System.out.println("Syntax error!!");
+		System.out.println("Syntax error!! functionCallExpression");
 		System.exit(1);
 	}
 	//function functionName() - mahar
@@ -573,7 +720,7 @@ public class PhpParser {
 			this.token = this.nextToken();
 			return;
 		}
-		System.out.println("Syntax error!!");
+		System.out.println("Syntax error!! functionName");
 		System.exit(1);
 	}
 	
@@ -588,7 +735,7 @@ public class PhpParser {
 				}
 			}
 		}
-		System.out.println("Syntax error!!");
+		System.out.println("Syntax error!! directives");
 		System.exit(1);
 	}
 	//simpleVarName - mahar
@@ -602,7 +749,7 @@ public class PhpParser {
 				this.token=this.nextToken();
 				return;
 			}
-			System.out.println("Syntax error!!");
+			System.out.println("Syntax error!! simpleVarName");
 			System.exit(1);
 		}
 	}
@@ -611,7 +758,7 @@ public class PhpParser {
 			this.token=this.nextToken();
 			return;
 		}
-		System.out.println("Syntax error!!");
+		System.out.println("Syntax error!! string");
 		System.exit(1);
 	}
 	
@@ -620,7 +767,7 @@ public class PhpParser {
 			this.token=this.nextToken();
 			return;
 		}
-		System.out.println("Syntax error!!");
+		System.out.println("Syntax error!! number");
 		System.exit(1);
 	}
 	
@@ -663,7 +810,7 @@ public class PhpParser {
 				if (isDigit()) {
 					return true;
 				} else {
-					System.out.println("syntax error!!");
+					System.out.println("syntax error!! isNumber");
 					return false;
 				}
 			} else {
