@@ -438,21 +438,21 @@ public class PhpParser {
 		else if(this.isBitwiseXor(this.getTokenAt(this.getCurrentIndex()+1))){
 			this.bitwiseAndExpress();
 		}
-		else if(this.isLowBooleanOr(this.getTokenAt(this.getCurrentIndex()+1))){
-			this.lowBooleanOrExpress();
-		}
-		else if(this.isHighBooleanOr(this.getTokenAt(this.getCurrentIndex()+1))){
-			this.highBooleanOrExpress();
-		}
-		else if(this.isLowBooleanAnd(this.getTokenAt(this.getCurrentIndex()+1))){
-			this.lowBoolanAndExpress();
-		}
-		else if(this.isHighBooleanAnd(this.getTokenAt(this.getCurrentIndex()+1))){
-			this.highBoolanAndExpress();
-		}
 		else if(this.isBooleanXor(this.getTokenAt(this.getCurrentIndex()+1))){
 			this.booleanXorExpress();
 		}
+		else if(this.isBooleanAnd(this.getTokenAt(this.getCurrentIndex()+1))) {
+			this.booleanAndExpress();
+		}
+		else if(this.isBooleanOr(this.getTokenAt(this.getCurrentIndex()+1))) {
+			this.booleanOrExpress();
+		}
+//		else if(this.isIncrementOp(this.token) || this.isIncrementOp(this.getTokenAt(this.getCurrentIndex()+1))){
+//			this.incrementExpress();
+//		}
+//		else if(this.isDecrementOp(this.token) || this.isDecrementOp(this.getTokenAt(this.getCurrentIndex()+1))){
+//			this.decrementExpress();
+//		}
 	}
 	//additiveExpress - mahar
 	public void additiveExpress(){
@@ -612,6 +612,24 @@ public class PhpParser {
 		}
 		return;
 	}
+	//booleanAnd - mahar
+	public void booleanAndExpress(){
+		if(this.isLowBooleanAnd(this.getTokenAt(this.getCurrentIndex()+1))){
+			this.lowBoolanAndExpress();
+		}
+		else if(this.isHighBooleanAnd(this.getTokenAt(this.getCurrentIndex()+1))){
+			this.highBoolanAndExpress();
+		}
+	}
+	//booleanOr - mahar
+	public void booleanOrExpress(){
+		if(this.isLowBooleanOr(this.getTokenAt(this.getCurrentIndex()+1))){
+			this.lowBooleanOrExpress();
+		}
+		else if(this.isHighBooleanOr(this.getTokenAt(this.getCurrentIndex()+1))){
+			this.highBooleanOrExpress();
+		}
+	}
 	//lowBoolanAndExpress - mahar
 	public void lowBoolanAndExpress(){
 		this.booleanXorExpress();
@@ -628,34 +646,48 @@ public class PhpParser {
 		}
 		return;
 	}
-
+	//highBoolanAndExpress - mahar
 	public void highBoolanAndExpress(){
 		
 	}
-
-	public void booleanXorExpress(){
+	//highBoolanAndExpress2 - mahar
+	public void highBoolanAndExpress2(){
 		
 	}
-	//prefixExpress - mahar
-	public void prefixExpress(){
-		this.suffixExpress();
-		this.prefixExpress2();
+	
+	//booleanXorExpress - mahar
+	public void booleanXorExpress(){
+		this.lowBoolanAndExpress();
+		this.booleanXorExpress2();
+	}
+	//booleanXorExpress2 - mahar
+	public void booleanXorExpress2(){
+		System.out.println("enter booleanXorExpress2: "+this.token);
+		if(this.isBooleanXor(this.token)){
+			this.token = this.nextToken();
+			System.out.println("go to next token: "+this.token);
+			this.booleanXorExpress();
+		}
 		return;
 	}
+
 	//prefixExpress2 - mahar
-	public void prefixExpress2(){
-		System.out.println("enter prefixExpress2: "+this.token);
+	public void prefixExpress(){
+		System.out.println("enter prefixExpress: "+this.token);
 		if(this.isPrefixOp(this.token)){
 			this.token = this.nextToken();
 			System.out.println("go to next token: "+this.token);
-			this.prefixExpress();
+			this.suffixExpress();
+		}
+		else{
+			this.suffixExpress();
 		}
 		return;		
 	}
 
 	//prefixExpress - mahar
 	public void suffixExpress(){
-		this.basicExpression();
+		this.basicExpress();
 		this.suffixExpress2();
 		return;
 	}
@@ -665,12 +697,38 @@ public class PhpParser {
 		if(this.isSuffixOp(this.token)){
 			this.token = this.nextToken();
 			System.out.println("go to next token: "+this.token);
-			this.suffixExpress();
+			return;
 		}
-		return;		
 	}
+	//textDisplayStmt
+	public void textDisplayStmt(){
+		if(this.token.equals("echo") || this.token.equals("print")){
+			this.token = this.nextToken();
+			this.basicExpressList();
+			if(this.token.equals(";")){
+				this.token = this.nextToken();
+				return;
+			}
+		}
+		System.out.println("Syntax error!! textDisplayStmt");
+		System.exit(1);
+	}
+	//basicExpressiList - mahar
+	public void basicExpressList(){
+		this.basicExpress();
+		this.basicExpressList2();
+	}
+	//basicExpressiList2 - mahar
+	public void basicExpressList2(){
+		if(this.isConcatOp(this.token)){
+			this.token = this.nextToken();
+			this.basicExpressList();
+		}
+		return;
+	}
+	
 	//basicExpression - mahar
-	public void basicExpression(){
+	public void basicExpress(){
 		//cek nilai first dari basicExpression
 		
 		if(this.token.charAt(0)=='$'){ //cek variabel
@@ -690,10 +748,8 @@ public class PhpParser {
 		}
 		else if(this.isIdentifier()){ //cek token adalah identifier
 			this.functionCallExpression();
-		}
-			
+		}	
 	}
-
 	
 	//function functionCallStatement - mahar
 	public void functionCallStatement(){
@@ -718,7 +774,6 @@ public class PhpParser {
 				return;
 			}
 		}
-		
 		System.out.println("Syntax error!! functionCallExpression");
 		System.exit(1);
 	}
@@ -838,6 +893,17 @@ public class PhpParser {
 		return false;
 	}
 	/* method dibawah ini digunakan untuk melakukan pengecekan pada operator*/
+	
+	// is concat operator - mahar
+		public boolean isConcatOp(String op) {
+			for (int i = 0; i < this.term.concatOp.length; i++) {
+				if (this.term.concatOp[i].equals(op)) {
+					return true;
+				}
+			}
+			return false;
+		}
+	
 	// is prefix operator - mahar
 	public boolean isPrefixOp(String op) {
 		if (isCastingOp(op) || isSuffixOp(op) || isOtherOp(op)) {
@@ -874,7 +940,7 @@ public class PhpParser {
 		return false;
 	}
 
-	// is suffix operator - mahar
+	// isIncrementOp - mahar
 	public boolean isIncrementOp(String op) {
 		for (int i = 0; i < this.term.incrOp.length; i++) {
 			if (this.term.incrOp[i].equals(op)) {
@@ -884,7 +950,7 @@ public class PhpParser {
 		return false;
 	}
 
-	// is suffix operator - mahar
+	// isDecrementOp - mahar
 	public boolean isDecrementOp(String op) {
 		for (int i = 0; i < this.term.dcrOp.length; i++) {
 			if (this.term.dcrOp[i].equals(op)) {
@@ -1007,6 +1073,20 @@ public class PhpParser {
 	//is bitwise xor - mahar
 	public boolean isBitwiseXor(String op){
 		if(op.equals("^")){
+			return true;
+		}
+		return false;
+	}
+	//isBooleanAnd mahar
+	public boolean isBooleanAnd(String op){
+		if(this.isLowBooleanAnd(op) || this.isHighBooleanAnd(op)){
+			return true;
+		}
+		return false;
+	}
+	//isBooleanOr - mahar
+	public boolean isBooleanOr(String op){
+		if(this.isLowBooleanOr(op) || this.isHighBooleanOr(op)){
 			return true;
 		}
 		return false;

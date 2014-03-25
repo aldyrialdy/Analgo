@@ -32,6 +32,7 @@ public class TerminalSymbol{
 	public String[] bitwiseOp = {"<<",">>","&","^","|"};
 	public String[] castOp = {"(string)","(object)","(float)","(array)","(bool)","(int)"};
 	public String[] otherOp = {"!","-","~",",","@","instanceof","clone","new","include","require"}; 
+	public String[] concatOp = {".",","};
 	
 	//adding terminal symbol to compare first nonterminal
 	public String[] prefix = {"++","--","!","-","~","<Casting-Operator>","`","@","instanceof","clone","new","include","require"};
