@@ -12,6 +12,10 @@ import java.io.Reader;
 import java.io.FileInputStream;
 import java.nio.charset.Charset;
 
+import javax.management.ObjectName;
+
+import sun.org.mozilla.javascript.ast.Jump;
+
 public class PhpParser {
 	private String token = null;
 	private ArrayList scriptTokens = null;
@@ -263,30 +267,25 @@ public class PhpParser {
 
 	// structuredScript
 	public void structuredScript() {
-		// // TODO Auto-generated method stub
-		// if(this.token.equalsIgnoreCase("abstract")){
-		// classDeclaration();
-		// structuredScriptList();
-		// }
-		// else if(this.token.equalsIgnoreCase("function")){
-		// functionDeclaration();
-		// structuredScriptList();
-		// }
-		// else if(this.token.equalsIgnoreCase("echo") ||
-		// this.token.equalsIgnoreCase("echo")){
-		// textDisplayStatement();
-		// structuredScriptList();
-		// }
-		// else if(isString()
-		// || isNumber() || this.token.equalsIgnoreCase("_")
-		// || this.token.contains("\"") || this.token.contains("\'") ||
-		// this.token.equalsIgnoreCase("$this")){
-		// compoundStatement();
-		// structuredScriptList();
-		// }
-		// else if(this.token.contains("$")){
-		//
-		// }
+		// TODO Auto-generated method stub
+//		if (this.token.equalsIgnoreCase("abstract")) {
+//			classDeclaration();
+//			structuredScriptList();
+//		} else if (this.token.equalsIgnoreCase("function")) {
+//			functionDeclaration();
+//			structuredScriptList();
+//		} else if (this.token.equalsIgnoreCase("echo")
+//				|| this.token.equalsIgnoreCase("print")) {
+//			textDisplayStatement();
+//			structuredScriptList();
+//		} else if (isString() || isNumber() || this.token.equalsIgnoreCase("_")
+//				|| this.token.contains("\"") || this.token.contains("\'")
+//				|| this.token.equalsIgnoreCase("$this")) {
+//			compoundStatement();
+//			structuredScriptList();
+//		} else if (this.token.contains("$")) {
+//			
+//		}
 	}
 
 	// tambahan property
@@ -403,9 +402,9 @@ public class PhpParser {
 	// Values
 	public void Values() {
 		// TODO Auto-generated method stub
-		if (isString()) {
+		if (this.isString()) {
 			this.token = this.nextToken();
-		} else if (isNumber()) {
+		} else if (this.isNumber()) {
 			this.token = this.nextToken();
 		} else {
 			System.out.println("syntax error!!");
@@ -414,27 +413,286 @@ public class PhpParser {
 	}
 
 	// compoundStatement
-		public void compoundStatement() {
-			Statement();
-			compoundStatementNext();
-		}
+	public void compoundStatement() {
+		this.Statement();
+		this.compoundStatementNext();
+	}
 
-		public void compoundStatementNext() {
-			// TODO Auto-generated method stub
-			if (this.token.contains("$")
-					|| searchTerminal(this.term.jumpStatement, this.token)
-					|| this.token.equalsIgnoreCase("declare")
-					|| searchTerminal(this.term.flowControl, this.token)
-					|| this.token.equalsIgnoreCase(";") || isIdentifier()) {
-				this.compoundStatement();
+	// compoundStatementNext
+	public void compoundStatementNext() {
+		// TODO Auto-generated method stub
+		if (this.token.contains("$")
+				|| searchTerminal(this.term.jumpStatement, this.token)
+				|| this.token.equalsIgnoreCase("declare")
+				|| searchTerminal(this.term.flowControl, this.token)
+				|| this.token.equalsIgnoreCase(";") || isIdentifier()) {
+			this.compoundStatement();
+		}
+	}
+	
+	//Statement
+	public void Statement() {
+		// TODO Auto-generated method stub
+		if (this.token.charAt(0) == '$' || this.isNumber() || this.isString() || this.isIdentifier()) { // cek variabel
+			this.expressionStatement();
+		}
+		else if(searchTerminal(this.term.jumpStatement, this.token)){
+			this.jumpStatement();
+		}
+		else if(this.token.equalsIgnoreCase("declare")){
+			this.declareStatement();
+		}
+		else if(searchTerminal(this.term.flowControl, this.token)){
+			this.flowControlStatement();
+		}
+		else if(this.token.equalsIgnoreCase(";")){
+			this.nullStatement();
+		}
+		else if(this.getTokenAt(this.getCurrentIndex() + 1).equalsIgnoreCase("-") && this.getTokenAt(this.getCurrentIndex() + 2).equalsIgnoreCase(">")){
+			this.objectInstantiationStatement();
+		}
+		else if(this.getTokenAt(this.getCurrentIndex() + 1).equalsIgnoreCase("=") || this.getTokenAt(this.getCurrentIndex() + 1).equalsIgnoreCase("::")){
+			this.classMemberCallingStatement();
+		}
+		else{
+			System.out.println("syntax error!!");
+			System.exit(1);
+		}
+	}
+
+	//objectInstantiationStatement
+	public void objectInstantiationStatement() {
+		// TODO Auto-generated method stub
+//		this.objectName();
+		if(this.token.equalsIgnoreCase("=")){
+			this.token = this.nextToken();
+			if(this.token.equalsIgnoreCase("new")){
+				this.token = this.nextToken();
+//				this.className();
+				if(this.token.equalsIgnoreCase("(")){
+					this.token = this.nextToken();
+					this.parameterList();
+					if(this.token.equalsIgnoreCase(")")){
+						this.token = this.nextToken();
+						if(this.token.equalsIgnoreCase(";")){
+							this.token = this.nextToken();
+						}
+						else{
+							System.out.println("syntax error!!");
+							System.exit(1);
+						}
+					}
+					else{
+						System.out.println("syntax error!!");
+						System.exit(1);
+					}
+				}
+				else{
+					System.out.println("syntax error!!");
+					System.exit(1);
+				}
+			}
+			else{
+				System.out.println("syntax error!!");
+				System.exit(1);
 			}
 		}
-
-		public void Statement() {
-			// TODO Auto-generated method stub
-
+		else{
+			System.out.println("syntax error!!");
+			System.exit(1);
 		}
+	}
 	
+	//classMemberCallingStatement
+	public void classMemberCallingStatement() {
+		// TODO Auto-generated method stub
+//		this.classMemberCallingExpression();
+		if(this.token.equalsIgnoreCase(";")){
+			this.token = this.nextToken();
+		}
+		else{
+			System.out.println("syntax error!!");
+			System.exit(1);
+		}
+	}
+	
+	//expressionStatement
+	public void expressionStatement() {
+		// TODO Auto-generated method stub
+		this.expression();
+		if(this.token.equalsIgnoreCase(";")){
+			this.token = this.nextToken();
+		}
+		else{
+			System.out.println("syntax error!!");
+			System.exit(1);
+		}
+	}
+	
+	//jumpStatement
+	public void jumpStatement() {
+		// TODO Auto-generated method stub
+		if(this.token.equalsIgnoreCase("continue")){
+			this.continueStatement();
+		}
+		else if(this.token.equalsIgnoreCase("break")){
+			this.breakStatement();
+		}
+		else if(this.token.equalsIgnoreCase("return")){
+			this.returnStatement();
+		}
+		else{
+			System.out.println("syntax error!!");
+			System.exit(1);
+		}
+	}
+
+	//declareStatement
+	public void declareStatement() {
+		// TODO Auto-generated method stub
+		if(this.token.equalsIgnoreCase("declare")){
+			this.token = this.nextToken();
+			if(this.token.equalsIgnoreCase("(")){
+				this.token = this.nextToken();
+				this.directives();
+				if(this.token.equalsIgnoreCase(")")){
+					this.token = this.nextToken();
+					this.declareStatementNext();
+				}
+				else{
+					System.out.println("syntax error!!");
+					System.exit(1);
+				}
+			}
+			else{
+				System.out.println("syntax error!!");
+				System.exit(1);
+			}
+		}
+		else{
+			System.out.println("syntax error!!");
+			System.exit(1);
+		}
+	}
+	
+	//declareStatementNext
+	public void declareStatementNext() {
+		// TODO Auto-generated method stub
+		if(this.token.equalsIgnoreCase(";")){
+			this.token = this.nextToken();
+			compoundStatement();
+		}
+		else if(this.token.equalsIgnoreCase("{")){
+			this.token = this.nextToken();
+			compoundStatement();
+			if(this.token.equalsIgnoreCase("}")){
+				this.token = this.nextToken();
+			}
+			else{
+				System.out.println("syntax error!!");
+				System.exit(1);
+			}
+		}
+		else{
+			System.out.println("syntax error!!");
+			System.exit(1);
+		}
+	}
+
+	//flowControlStatement
+	public void flowControlStatement() {
+		// TODO Auto-generated method stub
+		//belum	
+	}
+	
+	//nullStatement
+	public void nullStatement() {
+		// TODO Auto-generated method stub
+		if(this.token.equalsIgnoreCase(";")){
+			this.token = this.nextToken();
+		}
+		else{
+			System.out.println("syntax error!!");
+			System.exit(1);
+		}
+	}
+	
+	//continueStatement
+	public void continueStatement() {
+		// TODO Auto-generated method stub
+		if(this.token.equalsIgnoreCase("continue")){
+			this.token = this.nextToken();
+			this.digitConstantaNext();
+			if(this.token.equalsIgnoreCase(";")){
+				this.token = this.nextToken();
+			}
+			else{
+				System.out.println("syntax error!!");
+				System.exit(1);
+			}
+		}
+		else{
+			System.out.println("syntax error!!");
+			System.exit(1);
+		}
+	}
+
+	//returnStatement
+	public void returnStatement() {
+		// TODO Auto-generated method stub
+		if(this.token.equalsIgnoreCase("return")){
+			this.token = this.nextToken();
+			this.returnStatementNext();
+			if(this.token.equalsIgnoreCase(";")){
+				this.token = this.nextToken();
+			}
+			else{
+				System.out.println("syntax error!!");
+				System.exit(1);
+			}
+		}
+		else{
+			System.out.println("syntax error!!");
+			System.exit(1);
+		}
+	}
+
+	//returnStatementNext
+	public void returnStatementNext() {
+		// TODO Auto-generated method stub
+		if(this.token.charAt(0) == '$' || this.isNumber() || this.isString() || this.isIdentifier()){
+			expression();
+		}
+	}
+
+	//breakStatement
+	public void breakStatement() {
+		// TODO Auto-generated method stub
+		if(this.token.equalsIgnoreCase("break")){
+			this.token = this.nextToken();
+			this.digitConstantaNext();
+			if(this.token.equalsIgnoreCase(";")){
+				this.token = this.nextToken();
+			}
+			else{
+				System.out.println("syntax error!!");
+				System.exit(1);
+			}
+		}
+		else{
+			System.out.println("syntax error!!");
+			System.exit(1);
+		}
+	}
+
+	//digitConstantaNext
+	public void digitConstantaNext() {
+		// TODO Auto-generated method stub
+		if(this.isDigit()){
+//			this.digitConstanta();
+		}
+	}
+
 	// memberClassCalling - mahar
 	public void memberClassCall() {
 		if (this.token.equals("$this")) {
