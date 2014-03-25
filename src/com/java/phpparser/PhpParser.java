@@ -447,12 +447,6 @@ public class PhpParser {
 		else if(this.isBooleanOr(this.getTokenAt(this.getCurrentIndex()+1))) {
 			this.booleanOrExpress();
 		}
-//		else if(this.isIncrementOp(this.token) || this.isIncrementOp(this.getTokenAt(this.getCurrentIndex()+1))){
-//			this.incrementExpress();
-//		}
-//		else if(this.isDecrementOp(this.token) || this.isDecrementOp(this.getTokenAt(this.getCurrentIndex()+1))){
-//			this.decrementExpress();
-//		}
 	}
 	//additiveExpress - mahar
 	public void additiveExpress(){
@@ -671,6 +665,25 @@ public class PhpParser {
 		return;
 	}
 
+	//conditionalExpress - mahar
+	public void conditionalExpress(){
+		this.booleanOrExpress();
+		this.conditionalExpress2();
+	}
+	//conditionalExpress2 - mahar
+	public void conditionalExpress2(){
+		if(this.token.equals("?")){
+			this.token = this.nextToken();
+			this.expression();
+			if(this.token.equals(":")){
+				this.token = this.nextToken();
+				this.conditionalExpress();
+				return;
+			}
+		}
+	}
+	
+	
 	//prefixExpress2 - mahar
 	public void prefixExpress(){
 		System.out.println("enter prefixExpress: "+this.token);
