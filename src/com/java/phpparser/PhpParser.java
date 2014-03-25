@@ -264,27 +264,28 @@ public class PhpParser {
 	// structuredScript
 	public void structuredScript() {
 		// TODO Auto-generated method stub
-//		if (this.token.equalsIgnoreCase("abstract")) {
-//			classDeclaration();
-//			structuredScriptList();
-//		} else if (this.token.equalsIgnoreCase("function")) {
-//			functionDeclaration();
-//			structuredScriptList();
-//		} else if (this.token.equalsIgnoreCase("echo")
-//				|| this.token.equalsIgnoreCase("print")) {
-//			textDisplayStatement();
-//			structuredScriptList();
-//		} else if (isString() || isNumber() || this.token.equalsIgnoreCase("_")
-//				|| this.token.contains("\"") || this.token.contains("\'")
-//				|| this.token.equalsIgnoreCase("$this")) {
-//			compoundStatement();
-//			structuredScriptList();
-//		} else if (this.token.contains("$")) {
-//			
-//		}
+		// if (this.token.equalsIgnoreCase("abstract")) {
+		// classDeclaration();
+		// structuredScriptList();
+		// } else if (this.token.equalsIgnoreCase("function")) {
+		// functionDeclaration();
+		// structuredScriptList();
+		// } else if (this.token.equalsIgnoreCase("echo")
+		// || this.token.equalsIgnoreCase("print")) {
+		// textDisplayStatement();
+		// structuredScriptList();
+		// } else if (isString() || isNumber() ||
+		// this.token.equalsIgnoreCase("_")
+		// || this.token.contains("\"") || this.token.contains("\'")
+		// || this.token.equalsIgnoreCase("$this")) {
+		// compoundStatement();
+		// structuredScriptList();
+		// } else if (this.token.contains("$")) {
+		//
+		// }
 	}
 
-	//property - aldy
+	// property - aldy
 	public void property() {
 		if (this.token.equalsIgnoreCase("public")
 				|| this.token.equalsIgnoreCase("private")
@@ -302,7 +303,7 @@ public class PhpParser {
 		// System.exit(1);
 	}
 
-	//finalProperty - aldy
+	// finalProperty - aldy
 	public void finalProperty() {
 		// TODO Auto-generated method stub
 		if (this.token.equalsIgnoreCase("final")) {
@@ -312,7 +313,7 @@ public class PhpParser {
 		}
 	}
 
-	//visibilityProperty - aldy
+	// visibilityProperty - aldy
 	public void visibilityProperty() {
 		// TODO Auto-generated method stub
 		if (this.token.equalsIgnoreCase("public")
@@ -324,7 +325,7 @@ public class PhpParser {
 		}
 	}
 
-	//staticProperty - aldy
+	// staticProperty - aldy
 	public void staticProperty() {
 		// TODO Auto-generated method stub
 		if (this.token.equalsIgnoreCase("static")) {
@@ -334,7 +335,7 @@ public class PhpParser {
 		}
 	}
 
-	//abstractProperty - aldy
+	// abstractProperty - aldy
 	public void abstractProperty() {
 		// TODO Auto-generated method stub
 		if (this.token.equalsIgnoreCase("abstract")) {
@@ -348,6 +349,12 @@ public class PhpParser {
 	public void variableDeclaration() {
 		simpleVarName();
 		simpleVariableNameCont();
+		if (this.token.equalsIgnoreCase(";")) {
+			this.token = this.nextToken();
+		} else {
+			System.out.println("syntax error!!");
+			System.exit(1);
+		}
 	}
 
 	// SimpleVariableNameCont - aldy
@@ -356,19 +363,6 @@ public class PhpParser {
 		if (this.token.equalsIgnoreCase("=")) {
 			this.token = this.nextToken();
 			this.variableValue();
-			if (this.token.equalsIgnoreCase(";")) {
-				this.nextToken();
-			} else {
-				System.out.println("syntax error!!");
-				System.exit(1);
-			}
-		} else if (this.token.equalsIgnoreCase(";")) {
-			this.token = this.nextToken();
-		} else if (this.token.equalsIgnoreCase("[")) {
-			// this.dimension();
-		} else {
-			System.out.println("syntax error!!");
-			System.exit(1);
 		}
 	}
 
@@ -379,8 +373,8 @@ public class PhpParser {
 			this.token = this.nextToken();
 			if (this.token.equalsIgnoreCase("(")) {
 				this.token = this.nextToken();
-				// this.arrayValue();
-				if (this.token.equalsIgnoreCase("(")) {
+				this.arrayValues();
+				if (this.token.equalsIgnoreCase(")")) {
 					this.token = this.nextToken();
 				} else {
 					System.out.println("syntax error!!");
@@ -393,7 +387,64 @@ public class PhpParser {
 		} else if (this.token.contains("\"") || this.token.contains("\'")
 				|| isNumber()) {
 			Values();
+		} else if (this.token.equalsIgnoreCase("[")) {
+			// this.dimension();
 		} else {
+			System.out.println("syntax error!!");
+			System.exit(1);
+		}
+	}
+
+	// arrayValues - aldy
+	public void arrayValues() {
+		// TODO Auto-generated method stub
+		if (this.getTokenAt(this.getCurrentIndex() + 1).equalsIgnoreCase("=")
+				&& this.getTokenAt(this.getCurrentIndex() + 2)
+						.equalsIgnoreCase(">")) {
+			this.indexAndValues();
+			this.arrayValuesList();
+		} else if (this.getTokenAt(this.getCurrentIndex() + 1)
+				.equalsIgnoreCase(",")) {
+			this.Values();
+			this.arrayValuesList();
+		}
+	}
+
+	// arrayValuesList - aldy
+	public void arrayValuesList() {
+		// TODO Auto-generated method stub
+		if (this.token.equalsIgnoreCase(",")) {
+			this.token = this.nextToken();
+			this.arrayValues();
+		}
+	}
+
+	public void indexAndValues() {
+		// TODO Auto-generated method stub
+		this.indexName();
+		if (this.token.equalsIgnoreCase("=")){
+			this.token = this.nextToken();
+			if(this.token.equalsIgnoreCase(">")){
+				this.token = this.nextToken();
+				this.Values();
+			}
+			else{
+				System.out.println("syntax error!!");
+				System.exit(1);
+			}
+		}
+		else{
+			System.out.println("syntax error!!");
+			System.exit(1);
+		}
+	}
+	
+	public void indexName() {
+		// TODO Auto-generated method stub
+		if(this.isString() || this.isNumber()){
+			this.token = this.nextToken();
+		}
+		else{
 			System.out.println("syntax error!!");
 			System.exit(1);
 		}
@@ -429,267 +480,245 @@ public class PhpParser {
 			this.compoundStatement();
 		}
 	}
-	
-	//Statement - aldy
+
+	// Statement - aldy
 	public void Statement() {
 		// TODO Auto-generated method stub
-		if (this.token.charAt(0) == '$' || this.isNumber() || this.isString() || this.isIdentifier()) { // cek variabel
+		if (this.token.charAt(0) == '$' || this.isNumber() || this.isString()
+				|| this.isIdentifier()) { // cek variabel
 			this.expressionStatement();
-		}
-		else if(searchTerminal(this.term.jumpStatement, this.token)){
+		} else if (searchTerminal(this.term.jumpStatement, this.token)) {
 			this.jumpStatement();
-		}
-		else if(this.token.equalsIgnoreCase("declare")){
+		} else if (this.token.equalsIgnoreCase("declare")) {
 			this.declareStatement();
-		}
-		else if(searchTerminal(this.term.flowControl, this.token)){
+		} else if (searchTerminal(this.term.flowControl, this.token)) {
 			this.flowControlStatement();
-		}
-		else if(this.token.equalsIgnoreCase(";")){
+		} else if (this.token.equalsIgnoreCase(";")) {
 			this.nullStatement();
-		}
-		else if(this.getTokenAt(this.getCurrentIndex() + 1).equalsIgnoreCase("-") && this.getTokenAt(this.getCurrentIndex() + 2).equalsIgnoreCase(">")){
+		} else if (this.getTokenAt(this.getCurrentIndex() + 1)
+				.equalsIgnoreCase("-")
+				&& this.getTokenAt(this.getCurrentIndex() + 2)
+						.equalsIgnoreCase(">")) {
 			this.objectInstantiationStatement();
-		}
-		else if(this.getTokenAt(this.getCurrentIndex() + 1).equalsIgnoreCase("=") || this.getTokenAt(this.getCurrentIndex() + 1).equalsIgnoreCase("::")){
+		} else if (this.getTokenAt(this.getCurrentIndex() + 1)
+				.equalsIgnoreCase("=")
+				|| this.getTokenAt(this.getCurrentIndex() + 1)
+						.equalsIgnoreCase("::")) {
 			this.classMemberCallingStatement();
-		}
-		else{
+		} else {
 			System.out.println("syntax error!!");
 			System.exit(1);
 		}
 	}
 
-	//objectInstantiationStatement - aldy
+	// objectInstantiationStatement - aldy
 	public void objectInstantiationStatement() {
 		// TODO Auto-generated method stub
-//		this.objectName();
-		if(this.token.equalsIgnoreCase("=")){
+		// this.objectName();
+		if (this.token.equalsIgnoreCase("=")) {
 			this.token = this.nextToken();
-			if(this.token.equalsIgnoreCase("new")){
+			if (this.token.equalsIgnoreCase("new")) {
 				this.token = this.nextToken();
-//				this.className();
-				if(this.token.equalsIgnoreCase("(")){
+				// this.className();
+				if (this.token.equalsIgnoreCase("(")) {
 					this.token = this.nextToken();
 					this.parameterList();
-					if(this.token.equalsIgnoreCase(")")){
+					if (this.token.equalsIgnoreCase(")")) {
 						this.token = this.nextToken();
-						if(this.token.equalsIgnoreCase(";")){
+						if (this.token.equalsIgnoreCase(";")) {
 							this.token = this.nextToken();
-						}
-						else{
+						} else {
 							System.out.println("syntax error!!");
 							System.exit(1);
 						}
-					}
-					else{
+					} else {
 						System.out.println("syntax error!!");
 						System.exit(1);
 					}
-				}
-				else{
+				} else {
 					System.out.println("syntax error!!");
 					System.exit(1);
 				}
-			}
-			else{
+			} else {
 				System.out.println("syntax error!!");
 				System.exit(1);
 			}
-		}
-		else{
+		} else {
 			System.out.println("syntax error!!");
 			System.exit(1);
 		}
 	}
-	
-	//classMemberCallingStatement - aldy
+
+	// classMemberCallingStatement - aldy
 	public void classMemberCallingStatement() {
 		// TODO Auto-generated method stub
-//		this.classMemberCallingExpression();
-		if(this.token.equalsIgnoreCase(";")){
+		// this.classMemberCallingExpression();
+		if (this.token.equalsIgnoreCase(";")) {
 			this.token = this.nextToken();
-		}
-		else{
+		} else {
 			System.out.println("syntax error!!");
 			System.exit(1);
 		}
 	}
-	
-	//expressionStatement - aldy
+
+	// expressionStatement - aldy
 	public void expressionStatement() {
 		// TODO Auto-generated method stub
 		this.expression();
-		if(this.token.equalsIgnoreCase(";")){
+		if (this.token.equalsIgnoreCase(";")) {
 			this.token = this.nextToken();
-		}
-		else{
-			System.out.println("syntax error!!");
-			System.exit(1);
-		}
-	}
-	
-	//jumpStatement - aldy
-	public void jumpStatement() {
-		// TODO Auto-generated method stub
-		if(this.token.equalsIgnoreCase("continue")){
-			this.continueStatement();
-		}
-		else if(this.token.equalsIgnoreCase("break")){
-			this.breakStatement();
-		}
-		else if(this.token.equalsIgnoreCase("return")){
-			this.returnStatement();
-		}
-		else{
+		} else {
 			System.out.println("syntax error!!");
 			System.exit(1);
 		}
 	}
 
-	//declareStatement - aldy
+	// jumpStatement - aldy
+	public void jumpStatement() {
+		// TODO Auto-generated method stub
+		if (this.token.equalsIgnoreCase("continue")) {
+			this.continueStatement();
+		} else if (this.token.equalsIgnoreCase("break")) {
+			this.breakStatement();
+		} else if (this.token.equalsIgnoreCase("return")) {
+			this.returnStatement();
+		} else {
+			System.out.println("syntax error!!");
+			System.exit(1);
+		}
+	}
+
+	// declareStatement - aldy
 	public void declareStatement() {
 		// TODO Auto-generated method stub
-		if(this.token.equalsIgnoreCase("declare")){
+		if (this.token.equalsIgnoreCase("declare")) {
 			this.token = this.nextToken();
-			if(this.token.equalsIgnoreCase("(")){
+			if (this.token.equalsIgnoreCase("(")) {
 				this.token = this.nextToken();
 				this.directives();
-				if(this.token.equalsIgnoreCase(")")){
+				if (this.token.equalsIgnoreCase(")")) {
 					this.token = this.nextToken();
 					this.declareStatementNext();
-				}
-				else{
+				} else {
 					System.out.println("syntax error!!");
 					System.exit(1);
 				}
-			}
-			else{
+			} else {
 				System.out.println("syntax error!!");
 				System.exit(1);
 			}
-		}
-		else{
+		} else {
 			System.out.println("syntax error!!");
 			System.exit(1);
 		}
 	}
-	
-	//declareStatementNext - aldy
+
+	// declareStatementNext - aldy
 	public void declareStatementNext() {
 		// TODO Auto-generated method stub
-		if(this.token.equalsIgnoreCase(";")){
+		if (this.token.equalsIgnoreCase(";")) {
 			this.token = this.nextToken();
 			compoundStatement();
-		}
-		else if(this.token.equalsIgnoreCase("{")){
+		} else if (this.token.equalsIgnoreCase("{")) {
 			this.token = this.nextToken();
 			compoundStatement();
-			if(this.token.equalsIgnoreCase("}")){
+			if (this.token.equalsIgnoreCase("}")) {
 				this.token = this.nextToken();
-			}
-			else{
+			} else {
 				System.out.println("syntax error!!");
 				System.exit(1);
 			}
-		}
-		else{
+		} else {
 			System.out.println("syntax error!!");
 			System.exit(1);
 		}
 	}
 
-	//flowControlStatement
+	// flowControlStatement
 	public void flowControlStatement() {
 		// TODO Auto-generated method stub
-		//belum	
+		// belum
 	}
-	
-	//nullStatement - aldy
+
+	// nullStatement - aldy
 	public void nullStatement() {
 		// TODO Auto-generated method stub
-		if(this.token.equalsIgnoreCase(";")){
+		if (this.token.equalsIgnoreCase(";")) {
 			this.token = this.nextToken();
-		}
-		else{
+		} else {
 			System.out.println("syntax error!!");
 			System.exit(1);
 		}
 	}
-	
-	//continueStatement - aldy
+
+	// continueStatement - aldy
 	public void continueStatement() {
 		// TODO Auto-generated method stub
-		if(this.token.equalsIgnoreCase("continue")){
+		if (this.token.equalsIgnoreCase("continue")) {
 			this.token = this.nextToken();
 			this.digitConstantaNext();
-			if(this.token.equalsIgnoreCase(";")){
+			if (this.token.equalsIgnoreCase(";")) {
 				this.token = this.nextToken();
-			}
-			else{
+			} else {
 				System.out.println("syntax error!!");
 				System.exit(1);
 			}
-		}
-		else{
+		} else {
 			System.out.println("syntax error!!");
 			System.exit(1);
 		}
 	}
 
-	//returnStatement - aldy
+	// returnStatement - aldy
 	public void returnStatement() {
 		// TODO Auto-generated method stub
-		if(this.token.equalsIgnoreCase("return")){
+		if (this.token.equalsIgnoreCase("return")) {
 			this.token = this.nextToken();
 			this.returnStatementNext();
-			if(this.token.equalsIgnoreCase(";")){
+			if (this.token.equalsIgnoreCase(";")) {
 				this.token = this.nextToken();
-			}
-			else{
+			} else {
 				System.out.println("syntax error!!");
 				System.exit(1);
 			}
-		}
-		else{
+		} else {
 			System.out.println("syntax error!!");
 			System.exit(1);
 		}
 	}
 
-	//returnStatementNext - aldy
+	// returnStatementNext - aldy
 	public void returnStatementNext() {
 		// TODO Auto-generated method stub
-		if(this.token.charAt(0) == '$' || this.isNumber() || this.isString() || this.isIdentifier()){
+		if (this.token.charAt(0) == '$' || this.isNumber() || this.isString()
+				|| this.isIdentifier()) {
 			expression();
 		}
 	}
 
-	//breakStatement - aldy
+	// breakStatement - aldy
 	public void breakStatement() {
 		// TODO Auto-generated method stub
-		if(this.token.equalsIgnoreCase("break")){
+		if (this.token.equalsIgnoreCase("break")) {
 			this.token = this.nextToken();
 			this.digitConstantaNext();
-			if(this.token.equalsIgnoreCase(";")){
+			if (this.token.equalsIgnoreCase(";")) {
 				this.token = this.nextToken();
-			}
-			else{
+			} else {
 				System.out.println("syntax error!!");
 				System.exit(1);
 			}
-		}
-		else{
+		} else {
 			System.out.println("syntax error!!");
 			System.exit(1);
 		}
 	}
 
-	//digitConstantaNext - aldy
+	// digitConstantaNext - aldy
 	public void digitConstantaNext() {
 		// TODO Auto-generated method stub
-		if(this.isDigit()){
-//			this.digitConstanta();
+		if (this.isDigit()) {
+			// this.digitConstanta();
 		}
 	}
 
