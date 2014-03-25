@@ -46,17 +46,17 @@ public class PhpParser {
 		for (int i = 0; i < tokenSize; i++) {
 			System.out.println(scriptTokens.get(i).toString());
 		}
-		 System.out.println("-----------------------------------\n");
+		System.out.println("-----------------------------------\n");
 		// move nextToken pointer to the first word of array of words
-		 System.out.println(index+": "+this.token);
-		 this.token=this.nextToken();
-		 System.out.println(index+": "+this.token);
-		 this.token=this.nextToken();
-		 System.out.println(index+": "+this.token);
-		 this.token=this.nextToken();
-		 System.out.println(index+": "+this.token);
-		 this.additiveExpress();
-		 //System.out.println("check number: "+this.isNumber());
+		System.out.println(index + ": " + this.token);
+		this.token = this.nextToken();
+		System.out.println(index + ": " + this.token);
+		this.token = this.nextToken();
+		System.out.println(index + ": " + this.token);
+		this.token = this.nextToken();
+		System.out.println(index + ": " + this.token);
+		this.additiveExpress();
+		// System.out.println("check number: "+this.isNumber());
 	}
 
 	public void readFile(String filename) {
@@ -235,16 +235,61 @@ public class PhpParser {
 		}
 	}
 
+	// phpScript
+	/*
+	 * $ untuk rule <Basic-Expression> dan <Variable-Declaration> abstract untuk
+	 * rule <Class-Declaration> function untuk rule <Function-Declaration> echo
+	 * dan print untuk rule <Text-Display-Statement> String, number, _ ,", '
+	 * untuk rule <Compound-Statement>
+	 */
 	public void phpScript() {
-		ArrayList phpscript = null;
-		if (this.token.equalsIgnoreCase("")) {
-
-		} else if (this.token.equalsIgnoreCase("")) {
-
+		// ArrayList phpscript = null;
+		if (this.token.charAt(0) == '$'
+				|| this.token.equalsIgnoreCase("abstract")
+				|| this.token.equalsIgnoreCase("function")
+				|| this.token.equalsIgnoreCase("echo")
+				|| this.token.equalsIgnoreCase("print") || isString()
+				|| isNumber() || this.token.equalsIgnoreCase("_")
+				|| this.token.contains("\"") || this.token.contains("\'")) {
+			structuredScript();
+			phpScript();
+		} else if (this.token.equalsIgnoreCase("?>")) {
+			return;
+		} else {
+			System.out.println("syntax error!!");
+			System.exit(1);
 		}
 	}
-	
-	//tambahan property
+
+	// structuredScript
+	public void structuredScript() {
+		// // TODO Auto-generated method stub
+		// if(this.token.equalsIgnoreCase("abstract")){
+		// classDeclaration();
+		// structuredScriptList();
+		// }
+		// else if(this.token.equalsIgnoreCase("function")){
+		// functionDeclaration();
+		// structuredScriptList();
+		// }
+		// else if(this.token.equalsIgnoreCase("echo") ||
+		// this.token.equalsIgnoreCase("echo")){
+		// textDisplayStatement();
+		// structuredScriptList();
+		// }
+		// else if(isString()
+		// || isNumber() || this.token.equalsIgnoreCase("_")
+		// || this.token.contains("\"") || this.token.contains("\'") ||
+		// this.token.equalsIgnoreCase("$this")){
+		// compoundStatement();
+		// structuredScriptList();
+		// }
+		// else if(this.token.contains("$")){
+		//
+		// }
+	}
+
+	// tambahan property
 	public void property() {
 		if (this.token.equalsIgnoreCase("public")
 				|| this.token.equalsIgnoreCase("private")
@@ -255,12 +300,11 @@ public class PhpParser {
 			visibilityProperty();
 			staticProperty();
 			return;
-		}
-		else{
+		} else {
 			return;
 		}
-//		System.out.println("Syntax error!!");
-//		System.exit(1);
+		// System.out.println("Syntax error!!");
+		// System.exit(1);
 	}
 
 	public void finalProperty() {
@@ -300,82 +344,104 @@ public class PhpParser {
 			return;
 		}
 	}
-	
-	//variableDeclaration
-	public void variableDeclaration(){
+
+	// variableDeclaration
+	public void variableDeclaration() {
 		simpleVarName();
 		simpleVariableNameCont();
 	}
-	
-	//SimpleVariableNameCont
+
+	// SimpleVariableNameCont
 	public void simpleVariableNameCont() {
 		// TODO Auto-generated method stub
-		if(this.token.equalsIgnoreCase("=")){
+		if (this.token.equalsIgnoreCase("=")) {
 			this.token = this.nextToken();
 			this.variableValue();
-			if(this.token.equalsIgnoreCase(";")){
+			if (this.token.equalsIgnoreCase(";")) {
 				this.nextToken();
-			}
-			else{
+			} else {
 				System.out.println("syntax error!!");
 				System.exit(1);
 			}
-		}
-		else if(this.token.equalsIgnoreCase(";")){
+		} else if (this.token.equalsIgnoreCase(";")) {
 			this.token = this.nextToken();
-		}
-		else if(this.token.equalsIgnoreCase("[")){
-//			this.dimension();
-		}
-		else{
+		} else if (this.token.equalsIgnoreCase("[")) {
+			// this.dimension();
+		} else {
 			System.out.println("syntax error!!");
 			System.exit(1);
 		}
 	}
-	
-	//variableValue
+
+	// variableValue
 	public void variableValue() {
 		// TODO Auto-generated method stub
-		if(this.token.equalsIgnoreCase("array")){
+		if (this.token.equalsIgnoreCase("array")) {
 			this.token = this.nextToken();
 			if (this.token.equalsIgnoreCase("(")) {
 				this.token = this.nextToken();
-//				this.arrayValue();
+				// this.arrayValue();
 				if (this.token.equalsIgnoreCase("(")) {
 					this.token = this.nextToken();
-				}
-				else{
+				} else {
 					System.out.println("syntax error!!");
 					System.exit(1);
 				}
-			}
-			else{
+			} else {
 				System.out.println("syntax error!!");
 				System.exit(1);
 			}
-		}
-		else if(this.token.contains("\"") || this.token.contains("\'") || isNumber()){
+		} else if (this.token.contains("\"") || this.token.contains("\'")
+				|| isNumber()) {
 			Values();
-		}
-		else{
+		} else {
 			System.out.println("syntax error!!");
 			System.exit(1);
 		}
 	}
-	
-	//Values
-	private void Values() {
+
+	// Values
+	public void Values() {
 		// TODO Auto-generated method stub
-		//belum
+		if (isString()) {
+			this.token = this.nextToken();
+		} else if (isNumber()) {
+			this.token = this.nextToken();
+		} else {
+			System.out.println("syntax error!!");
+			System.exit(1);
+		}
 	}
+
+	// compoundStatement
+		public void compoundStatement() {
+			Statement();
+			compoundStatementNext();
+		}
+
+		public void compoundStatementNext() {
+			// TODO Auto-generated method stub
+			if (this.token.contains("$")
+					|| searchTerminal(this.term.jumpStatement, this.token)
+					|| this.token.equalsIgnoreCase("declare")
+					|| searchTerminal(this.term.flowControl, this.token)
+					|| this.token.equalsIgnoreCase(";") || isIdentifier()) {
+				this.compoundStatement();
+			}
+		}
+
+		public void Statement() {
+			// TODO Auto-generated method stub
+
+		}
 	
-	//memberClassCalling - mahar
-	public void memberClassCall(){
-		if(this.token.equals("$this")){
-			this.token=this.nextToken();
-			if(this.token.equals("->")){
-				this.token=this.nextToken();
-				if(this.isIdentifier()){
+	// memberClassCalling - mahar
+	public void memberClassCall() {
+		if (this.token.equals("$this")) {
+			this.token = this.nextToken();
+			if (this.token.equals("->")) {
+				this.token = this.nextToken();
+				if (this.isIdentifier()) {
 					this.token = this.nextToken();
 					this.functionArgExpression();
 					return;
@@ -385,352 +451,369 @@ public class PhpParser {
 		System.out.println("Syntax error!!");
 		System.exit(1);
 	}
-	
-	
-	
-	//functionArgExpression - mahar
-	public void functionArgExpression(){
-		if(this.token.equals("(")){
+
+	// functionArgExpression - mahar
+	public void functionArgExpression() {
+		if (this.token.equals("(")) {
 			this.token = this.nextToken();
-			//parameterList()
+			// parameterList()
 			this.parameterList();
-			if(this.token.equals(")")) {
+			if (this.token.equals(")")) {
 				this.token = this.nextToken();
 				return;
-			}
-			else{
+			} else {
 				System.out.println("Syntax error!!");
 				System.exit(1);
 			}
 		}
 		return;
 	}
-	
-	public void parameterList(){
-		
+
+	public void parameterList() {
+
 		return;
 	}
-	
-	//function expression - mahar
+
+	// function expression - mahar
 	public void expression() {
-		//cek token berikutnya dengan operator
-		if(this.isAddOp(this.getTokenAt(this.getCurrentIndex()+1))) {
+		// cek token berikutnya dengan operator
+		if (this.isAddOp(this.getTokenAt(this.getCurrentIndex() + 1))) {
 			this.additiveExpress();
-		}
-		else if(this.isMultiOp(this.getTokenAt(this.getCurrentIndex()+1))){
+		} else if (this.isMultiOp(this.getTokenAt(this.getCurrentIndex() + 1))) {
 			this.multiplicativeExpress();
-		}
-		else if(this.isEqualityOp(this.getTokenAt(this.getCurrentIndex()+1))){
+		} else if (this
+				.isEqualityOp(this.getTokenAt(this.getCurrentIndex() + 1))) {
 			this.equalityExpress();
-		}
-		else if(this.isRelationalOp(this.getTokenAt(this.getCurrentIndex()+1))){
+		} else if (this
+				.isRelationalOp(this.getTokenAt(this.getCurrentIndex() + 1))) {
 			this.relationalExpress();
-		}
-		else if(this.isShiftOp(this.getTokenAt(this.getCurrentIndex()+1))){
+		} else if (this.isShiftOp(this.getTokenAt(this.getCurrentIndex() + 1))) {
 			this.shiftExpress();
-		}
-		else if(this.isBitwiseAnd(this.getTokenAt(this.getCurrentIndex()+1))) {
+		} else if (this
+				.isBitwiseAnd(this.getTokenAt(this.getCurrentIndex() + 1))) {
 			this.bitwiseAndExpress();
-		}
-		else if(this.isBitwiseOr(this.getTokenAt(this.getCurrentIndex()+1))){
+		} else if (this
+				.isBitwiseOr(this.getTokenAt(this.getCurrentIndex() + 1))) {
 			this.bitwiseOrExpress();
-		}
-		else if(this.isBitwiseXor(this.getTokenAt(this.getCurrentIndex()+1))){
+		} else if (this
+				.isBitwiseXor(this.getTokenAt(this.getCurrentIndex() + 1))) {
 			this.bitwiseAndExpress();
-		}
-		else if(this.isLowBooleanOr(this.getTokenAt(this.getCurrentIndex()+1))){
+		} else if (this
+				.isLowBooleanOr(this.getTokenAt(this.getCurrentIndex() + 1))) {
 			this.lowBooleanOrExpress();
-		}
-		else if(this.isHighBooleanOr(this.getTokenAt(this.getCurrentIndex()+1))){
+		} else if (this
+				.isHighBooleanOr(this.getTokenAt(this.getCurrentIndex() + 1))) {
 			this.highBooleanOrExpress();
-		}
-		else if(this.isLowBooleanAnd(this.getTokenAt(this.getCurrentIndex()+1))){
+		} else if (this
+				.isLowBooleanAnd(this.getTokenAt(this.getCurrentIndex() + 1))) {
 			this.lowBoolanAndExpress();
-		}
-		else if(this.isHighBooleanAnd(this.getTokenAt(this.getCurrentIndex()+1))){
+		} else if (this
+				.isHighBooleanAnd(this.getTokenAt(this.getCurrentIndex() + 1))) {
 			this.highBoolanAndExpress();
-		}
-		else if(this.isBooleanXor(this.getTokenAt(this.getCurrentIndex()+1))){
+		} else if (this
+				.isBooleanXor(this.getTokenAt(this.getCurrentIndex() + 1))) {
 			this.booleanXorExpress();
 		}
 	}
-	//additiveExpress - mahar
-	public void additiveExpress(){
+
+	// additiveExpress - mahar
+	public void additiveExpress() {
 		this.multiplicativeExpress();
-		//this.token = this.nextToken();
+		// this.token = this.nextToken();
 		this.additiveExpress2();
 		return;
 	}
-	//additiveExpress2 - mahar
-	public void additiveExpress2(){
-		System.out.println("enter additiveExpress2: "+this.token);
-		if(this.isAddOp(this.token)){
+
+	// additiveExpress2 - mahar
+	public void additiveExpress2() {
+		System.out.println("enter additiveExpress2: " + this.token);
+		if (this.isAddOp(this.token)) {
 			this.token = this.nextToken();
-			System.out.println("go to next token: "+this.token);
+			System.out.println("go to next token: " + this.token);
 			this.additiveExpress();
 		}
-		return;		
+		return;
 	}
-	//multiplicativeExpress - mahar
-	public void multiplicativeExpress(){
+
+	// multiplicativeExpress - mahar
+	public void multiplicativeExpress() {
 		this.prefixExpress();
 		this.multiplicativeExpress2();
 		return;
 	}
-	//multiplicativeExpress2 - mahar
-	public void multiplicativeExpress2(){
-		System.out.println("enter multiplicativeExpress2: "+this.token);
-		if(this.isMultiOp(this.token)){
-			
+
+	// multiplicativeExpress2 - mahar
+	public void multiplicativeExpress2() {
+		System.out.println("enter multiplicativeExpress2: " + this.token);
+		if (this.isMultiOp(this.token)) {
+
 			this.token = this.nextToken();
-			System.out.println("go to next token: "+this.token);
+			System.out.println("go to next token: " + this.token);
 			this.multiplicativeExpress();
 		}
-		return;		
+		return;
 	}
-	//EqualityExpress - mahar
-	public void equalityExpress(){
+
+	// EqualityExpress - mahar
+	public void equalityExpress() {
 		this.relationalExpress();
 		this.equalityExpress2();
 		return;
 	}
-	//EqualityExpress2 - mahar
-	public void equalityExpress2(){
-		System.out.println("enter EqualityExpress2: "+this.token);
-		if(this.isEqualityOp(this.token)){
-			
+
+	// EqualityExpress2 - mahar
+	public void equalityExpress2() {
+		System.out.println("enter EqualityExpress2: " + this.token);
+		if (this.isEqualityOp(this.token)) {
+
 			this.token = this.nextToken();
-			System.out.println("go to next token: "+this.token);
+			System.out.println("go to next token: " + this.token);
 			this.equalityExpress();
 		}
-		return;	
+		return;
 	}
-	//relationalExpress - mahar
-	public void relationalExpress(){
+
+	// relationalExpress - mahar
+	public void relationalExpress() {
 		this.shiftExpress();
 		this.relationalExpress2();
-		
+
 	}
-	//relationalExpress2 - mahar
-	public void relationalExpress2(){
-		System.out.println("enter relationalExpress2: "+this.token);
-		if(this.isRelationalOp(this.token)){
+
+	// relationalExpress2 - mahar
+	public void relationalExpress2() {
+		System.out.println("enter relationalExpress2: " + this.token);
+		if (this.isRelationalOp(this.token)) {
 			this.token = this.nextToken();
-			System.out.println("go to next token: "+this.token);
+			System.out.println("go to next token: " + this.token);
 			this.relationalExpress();
 		}
 		return;
 	}
-	//shiftExpress - mahar
-	public void shiftExpress(){
+
+	// shiftExpress - mahar
+	public void shiftExpress() {
 		this.additiveExpress();
 		this.shiftExpress2();
 	}
-	//shiftExpress2 - mahar
-	public void shiftExpress2(){
-		System.out.println("enter shiftExpress2: "+this.token);
-		if(this.isShiftOp(this.token)){
+
+	// shiftExpress2 - mahar
+	public void shiftExpress2() {
+		System.out.println("enter shiftExpress2: " + this.token);
+		if (this.isShiftOp(this.token)) {
 			this.token = this.nextToken();
-			System.out.println("go to next token: "+this.token);
+			System.out.println("go to next token: " + this.token);
 			this.shiftExpress();
 		}
 		return;
 	}
-	//bitwiseAndExpress - mahar
-	public void bitwiseAndExpress(){
+
+	// bitwiseAndExpress - mahar
+	public void bitwiseAndExpress() {
 		this.equalityExpress();
 		this.bitwiseAndExpress2();
 	}
-	//bitwiseAndExpress2 - mahar
-	public void bitwiseAndExpress2(){
-		System.out.println("enter bitwiseAndExpress2: "+this.token);
-		if(this.isBitwiseAnd(this.token)){
+
+	// bitwiseAndExpress2 - mahar
+	public void bitwiseAndExpress2() {
+		System.out.println("enter bitwiseAndExpress2: " + this.token);
+		if (this.isBitwiseAnd(this.token)) {
 			this.token = this.nextToken();
-			System.out.println("go to next token: "+this.token);
+			System.out.println("go to next token: " + this.token);
 			this.bitwiseAndExpress();
 		}
 		return;
 	}
-	//bitwiseOrExpress - mahar
-	public void bitwiseOrExpress(){
+
+	// bitwiseOrExpress - mahar
+	public void bitwiseOrExpress() {
 		this.bitwiseAndExpress();
 		this.bitwiseOrExpress2();
 	}
-	//bitwiseOrExpress2 - mahar
-	public void bitwiseOrExpress2(){
-		System.out.println("enter bitwiseOrExpress2: "+this.token);
-		if(this.isBitwiseOr(this.token)){
+
+	// bitwiseOrExpress2 - mahar
+	public void bitwiseOrExpress2() {
+		System.out.println("enter bitwiseOrExpress2: " + this.token);
+		if (this.isBitwiseOr(this.token)) {
 			this.token = this.nextToken();
-			System.out.println("go to next token: "+this.token);
+			System.out.println("go to next token: " + this.token);
 			this.bitwiseOrExpress();
 		}
 		return;
 	}
 
-	//bitwiseXorExpress - mahar
-	public void bitwiseXorExpress(){
+	// bitwiseXorExpress - mahar
+	public void bitwiseXorExpress() {
 		this.bitwiseAndExpress();
 		this.bitwiseXorExpress2();
 	}
-	//bitwiseXorExpress2 - mahar
-	public void bitwiseXorExpress2(){
-		System.out.println("enter bitwiseXorExpress2: "+this.token);
-		if(this.isBitwiseXor(this.token)){
+
+	// bitwiseXorExpress2 - mahar
+	public void bitwiseXorExpress2() {
+		System.out.println("enter bitwiseXorExpress2: " + this.token);
+		if (this.isBitwiseXor(this.token)) {
 			this.token = this.nextToken();
-			System.out.println("go to next token: "+this.token);
+			System.out.println("go to next token: " + this.token);
 			this.bitwiseXorExpress();
 		}
 		return;
 	}
-	//lowBooleanOrExpress - mahar
-	public void lowBooleanOrExpress(){
+
+	// lowBooleanOrExpress - mahar
+	public void lowBooleanOrExpress() {
 		this.booleanXorExpress();
 		this.lowBooleanOrExpress2();
 	}
-	//lowBooleanOrExpress2 - mahar
-	public void lowBooleanOrExpress2(){
-		System.out.println("enter lowBooleanOrExpress2: "+this.token);
-		if(this.isLowBooleanOr(this.token)){
+
+	// lowBooleanOrExpress2 - mahar
+	public void lowBooleanOrExpress2() {
+		System.out.println("enter lowBooleanOrExpress2: " + this.token);
+		if (this.isLowBooleanOr(this.token)) {
 			this.token = this.nextToken();
-			System.out.println("go to next token: "+this.token);
+			System.out.println("go to next token: " + this.token);
 			this.lowBooleanOrExpress();
 		}
 		return;
 	}
-	//highBooleanOrExpress - mahar
-	public void highBooleanOrExpress(){
+
+	// highBooleanOrExpress - mahar
+	public void highBooleanOrExpress() {
 		this.highBoolanAndExpress();
 		this.highBooleanOrExpress2();
 	}
-	//highBooleanOrExpress2 - mahar
-	public void highBooleanOrExpress2(){
-		System.out.println("enter highBooleanOrExpress2: "+this.token);
-		if(this.isHighBooleanOr(this.token)){
+
+	// highBooleanOrExpress2 - mahar
+	public void highBooleanOrExpress2() {
+		System.out.println("enter highBooleanOrExpress2: " + this.token);
+		if (this.isHighBooleanOr(this.token)) {
 			this.token = this.nextToken();
-			System.out.println("go to next token: "+this.token);
+			System.out.println("go to next token: " + this.token);
 			this.highBooleanOrExpress();
 		}
 		return;
 	}
-	//lowBoolanAndExpress - mahar
-	public void lowBoolanAndExpress(){
-		
-	}
-	//lowBoolanAndExpress2 - mahar
-	public void lowBoolanAndExpress2(){
-		
+
+	// lowBoolanAndExpress - mahar
+	public void lowBoolanAndExpress() {
+
 	}
 
-	public void highBoolanAndExpress(){
-		
+	// lowBoolanAndExpress2 - mahar
+	public void lowBoolanAndExpress2() {
+
 	}
 
-	public void booleanXorExpress(){
-		
+	public void highBoolanAndExpress() {
+
 	}
-	//prefixExpress - mahar
-	public void prefixExpress(){
+
+	public void booleanXorExpress() {
+
+	}
+
+	// prefixExpress - mahar
+	public void prefixExpress() {
 		this.suffixExpress();
 		this.prefixExpress2();
 		return;
 	}
-	//prefixExpress2 - mahar
-	public void prefixExpress2(){
-		System.out.println("enter prefixExpress2: "+this.token);
-		if(this.isPrefixOp(this.token)){
+
+	// prefixExpress2 - mahar
+	public void prefixExpress2() {
+		System.out.println("enter prefixExpress2: " + this.token);
+		if (this.isPrefixOp(this.token)) {
 			this.token = this.nextToken();
-			System.out.println("go to next token: "+this.token);
+			System.out.println("go to next token: " + this.token);
 			this.prefixExpress();
 		}
-		return;		
+		return;
 	}
 
-	//prefixExpress - mahar
-	public void suffixExpress(){
+	// prefixExpress - mahar
+	public void suffixExpress() {
 		this.basicExpression();
 		this.suffixExpress2();
 		return;
 	}
-	//prefixExpress2 - mahar
-	public void suffixExpress2(){
-		System.out.println("enter suffixExpress2: "+this.token);
-		if(this.isSuffixOp(this.token)){
+
+	// prefixExpress2 - mahar
+	public void suffixExpress2() {
+		System.out.println("enter suffixExpress2: " + this.token);
+		if (this.isSuffixOp(this.token)) {
 			this.token = this.nextToken();
-			System.out.println("go to next token: "+this.token);
+			System.out.println("go to next token: " + this.token);
 			this.suffixExpress();
 		}
-		return;		
+		return;
 	}
-	//basicExpression - mahar
-	public void basicExpression(){
-		//cek nilai first dari basicExpression
-		
-		if(this.token.charAt(0)=='$'){ //cek variabel
-			if(this.token.equals("$this")){ //cek member class
+
+	// basicExpression - mahar
+	public void basicExpression() {
+		// cek nilai first dari basicExpression
+
+		if (this.token.charAt(0) == '$') { // cek variabel
+			if (this.token.equals("$this")) { // cek member class
 				this.memberClassCall();
 				return;
 			}
-			//masuk fungsi variableName()
+			// masuk fungsi variableName()
 			System.out.println("cek simpleVarName");
 			this.simpleVarName();
-		}
-		else if(this.isNumber()){ //cek token adalah angka
+		} else if (this.isNumber()) { // cek token adalah angka
 			this.number();
-		}
-		else if(this.isString()) { //cek token adalah string
+		} else if (this.isString()) { // cek token adalah string
 			this.string();
-		}
-		else if(this.isIdentifier()){ //cek token adalah identifier
+		} else if (this.isIdentifier()) { // cek token adalah identifier
 			this.functionCallExpression();
 		}
-			
+
 	}
 
-	
-	//function functionCallStatement - mahar
-	public void functionCallStatement(){
+	// function functionCallStatement - mahar
+	public void functionCallStatement() {
 		this.functionCallExpression();
-		if(this.token.equals(";")){
+		if (this.token.equals(";")) {
 			this.token = this.nextToken();
 			return;
 		}
 		System.out.println("Syntax error!! functionCallStatement");
 		System.exit(1);
 	}
-	
-	//function call expression - mahar
-	public void functionCallExpression(){
-		//check the current token is identifier (function name) or not
+
+	// function call expression - mahar
+	public void functionCallExpression() {
+		// check the current token is identifier (function name) or not
 		this.functionName();
-		if(this.token.equals("(")){
+		if (this.token.equals("(")) {
 			this.token = this.nextToken();
-			//call function parameterlist()
+			// call function parameterlist()
 			this.parameterList();
-			if(this.token.equals(")")) {
+			if (this.token.equals(")")) {
 				return;
 			}
 		}
-		
+
 		System.out.println("Syntax error!! functionCallExpression");
 		System.exit(1);
 	}
-	//function functionName() - mahar
-	public void functionName(){
-		if(this.isIdentifier()) {
+
+	// function functionName() - mahar
+	public void functionName() {
+		if (this.isIdentifier()) {
 			this.token = this.nextToken();
 			return;
 		}
 		System.out.println("Syntax error!! functionName");
 		System.exit(1);
 	}
-	
-	//directives - mahar
-	public void directives(){
-		if(this.token.equals("ticks")){
+
+	// directives - mahar
+	public void directives() {
+		if (this.token.equals("ticks")) {
 			this.token = this.nextToken();
-			if(this.token.equals("=")){
-				if(isDigit()) {
-					this.token= this.nextToken();
+			if (this.token.equals("=")) {
+				if (isDigit()) {
+					this.token = this.nextToken();
 					return;
 				}
 			}
@@ -738,39 +821,41 @@ public class PhpParser {
 		System.out.println("Syntax error!! directives");
 		System.exit(1);
 	}
-	//simpleVarName - mahar
-	public void simpleVarName(){
-		//this.token="$var";
-		if(this.token.charAt(0)=='$'){
-			//get the identifier name after '$' character
+
+	// simpleVarName - mahar
+	public void simpleVarName() {
+		// this.token="$var";
+		if (this.token.charAt(0) == '$') {
+			// get the identifier name after '$' character
 			this.token = this.token.substring(1);
-			//check if it is identifier or not
-			if(this.isIdentifier()) {
-				this.token=this.nextToken();
+			// check if it is identifier or not
+			if (this.isIdentifier()) {
+				this.token = this.nextToken();
 				return;
 			}
 			System.out.println("Syntax error!! simpleVarName");
 			System.exit(1);
 		}
 	}
-	public void string(){
-		if(this.isString()){
-			this.token=this.nextToken();
+
+	public void string() {
+		if (this.isString()) {
+			this.token = this.nextToken();
 			return;
 		}
 		System.out.println("Syntax error!! string");
 		System.exit(1);
 	}
-	
-	public void number(){
-		if(this.isNumber()){
-			this.token=this.nextToken();
+
+	public void number() {
+		if (this.isNumber()) {
+			this.token = this.nextToken();
 			return;
 		}
 		System.out.println("Syntax error!! number");
 		System.exit(1);
 	}
-	
+
 	// check is identifier - mahar
 	public boolean isIdentifier() {
 		if ((int) token.charAt(0) != 95
@@ -819,7 +904,7 @@ public class PhpParser {
 		}
 		return false;
 	}
-	
+
 	// check is String - mahar
 	public boolean isDigit() {
 		if ((int) this.token.charAt(0) >= 48
@@ -829,7 +914,8 @@ public class PhpParser {
 		}
 		return false;
 	}
-	/* method dibawah ini digunakan untuk melakukan pengecekan pada operator*/
+
+	/* method dibawah ini digunakan untuk melakukan pengecekan pada operator */
 	// is prefix operator - mahar
 	public boolean isPrefixOp(String op) {
 		if (isCastingOp(op) || isSuffixOp(op) || isOtherOp(op)) {
@@ -982,63 +1068,71 @@ public class PhpParser {
 		}
 		return false;
 	}
-	//is bitwise and - mahar
-	public boolean isBitwiseAnd(String op){
-		if(op.equals("&")){
+
+	// is bitwise and - mahar
+	public boolean isBitwiseAnd(String op) {
+		if (op.equals("&")) {
 			return true;
 		}
 		return false;
 	}
-	//is bitwise or - mahar
-	public boolean isBitwiseOr(String op){
-		if(op.equals("|")){
+
+	// is bitwise or - mahar
+	public boolean isBitwiseOr(String op) {
+		if (op.equals("|")) {
 			return true;
 		}
 		return false;
 	}
-	//is bitwise xor - mahar
-	public boolean isBitwiseXor(String op){
-		if(op.equals("^")){
+
+	// is bitwise xor - mahar
+	public boolean isBitwiseXor(String op) {
+		if (op.equals("^")) {
 			return true;
 		}
 		return false;
 	}
-	
-	//is low boolean or - mahar
-	public boolean isLowBooleanOr(String op){
-		if(op.equals("or")){
+
+	// is low boolean or - mahar
+	public boolean isLowBooleanOr(String op) {
+		if (op.equals("or")) {
 			return true;
 		}
 		return false;
 	}
-	//is high boolean or - mahar
-	public boolean isHighBooleanOr(String op){
-		if(op.equals("||")){
+
+	// is high boolean or - mahar
+	public boolean isHighBooleanOr(String op) {
+		if (op.equals("||")) {
 			return true;
 		}
 		return false;
 	}
-	//is low boolean and - mahar
-	public boolean isLowBooleanAnd(String op){
-		if(op.equals("and")){
+
+	// is low boolean and - mahar
+	public boolean isLowBooleanAnd(String op) {
+		if (op.equals("and")) {
 			return true;
 		}
 		return false;
 	}
-	//is high boolean or - mahar
-	public boolean isHighBooleanAnd(String op){
-		if(op.equals("&&")){
+
+	// is high boolean or - mahar
+	public boolean isHighBooleanAnd(String op) {
+		if (op.equals("&&")) {
 			return true;
 		}
 		return false;
 	}
-	//is low boolean or - mahar
-	public boolean isBooleanXor(String op){
-		if(op.equals("xor")){
+
+	// is low boolean or - mahar
+	public boolean isBooleanXor(String op) {
+		if (op.equals("xor")) {
 			return true;
 		}
 		return false;
 	}
+
 	/*
 	 * public String firstCharacter(){ String firstStr=null;
 	 * 
@@ -1050,11 +1144,11 @@ public class PhpParser {
 	 * 
 	 * return followStr; }
 	 */
-	public String getTokenAt(int idx){
+	public String getTokenAt(int idx) {
 		return this.scriptTokens.get(idx).toString();
 	}
-	
-	public int getCurrentIndex(){
+
+	public int getCurrentIndex() {
 		return this.index;
 	}
 
