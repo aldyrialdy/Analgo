@@ -614,11 +614,19 @@ public class PhpParser {
 	}
 	//lowBoolanAndExpress - mahar
 	public void lowBoolanAndExpress(){
+		this.booleanXorExpress();
+		this.lowBoolanAndExpress();
 		
 	}
 	//lowBoolanAndExpress2 - mahar
 	public void lowBoolanAndExpress2(){
-		
+		System.out.println("enter lowBoolanAndExpress2: "+this.token);
+		if(this.isLowBooleanAnd(this.token)){
+			this.token = this.nextToken();
+			System.out.println("go to next token: "+this.token);
+			this.lowBoolanAndExpress();
+		}
+		return;
 	}
 
 	public void highBoolanAndExpress(){
